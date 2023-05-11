@@ -1,0 +1,28 @@
+name: oathkeeper
+base: bare
+build-base: ubuntu:22.04
+version: "0.40.3"
+summary: Ory Oathkeeper
+description: |
+  Ory Oathkeeper is a cloud native Identity & Access Proxy / API (IAP) and Access Control Decision API that authenticates, authorizes, and mutates incoming HTTP(s) requests.
+license: Apache-2.0
+platforms:
+  amd64:
+
+services:
+  oathkeeper:
+    override: replace
+    command: oathkeeper serve
+    startup: enabled
+
+parts:
+  oathkeeper:
+    plugin: go
+    build-snaps:
+      - go/1.20/stable
+    build-environment:
+      - GOFLAGS: -ldflags=-w -ldflags=-s
+      - CGO_ENABLED: 0
+    source: https://github.com/ory/oathkeeper
+    source-type: git
+    source-tag: v0.40.3
