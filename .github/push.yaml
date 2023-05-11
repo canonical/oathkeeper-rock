@@ -1,0 +1,16 @@
+name: Push (any)
+
+# When pushing to any branch other than "main", we:
+# * build the rock image
+
+on:
+  push:
+    branches-ignore:
+      - "main"
+    paths:
+      - "rockcraft.yaml"
+      - ".github/workflows/**.yaml"
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yaml
