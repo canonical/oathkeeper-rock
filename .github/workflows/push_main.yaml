@@ -1,0 +1,27 @@
+name: Push (main)
+
+# When pushing to the "main" branch, we:
+# * build the rock image
+# * publish the image
+# * scan the image and upload the artifacts to the repository
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "rockcraft.yaml"
+      - ".github/workflows/**.yaml"
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: ./.github/workflows/build.yaml
+
+  publish:
+    needs: build
+    uses: ./.github/workflows/publish.yaml
+
+  scan:
+    needs: publish
+    uses: ./.github/workflows/scan.yaml
