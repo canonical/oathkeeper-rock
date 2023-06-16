@@ -6,6 +6,7 @@ summary: Ory Oathkeeper
 description: |
   Ory Oathkeeper is a cloud native Identity & Access Proxy / API (IAP) and Access Control Decision API that authenticates, authorizes, and mutates incoming HTTP(s) requests.
 license: Apache-2.0
+run-user: _daemon_
 platforms:
   amd64:
 
