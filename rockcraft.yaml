@@ -22,8 +22,20 @@ parts:
     build-snaps:
       - go/1.20/stable
     build-environment:
-      - GOFLAGS: -ldflags=-w -ldflags=-s
       - CGO_ENABLED: 0
+    override-build: |
+      src_config_path="github.com/ory/oathkeeper"
+      build_ver="${src_config_path}/x.Version"
+      build_hash="${src_config_path}/x.Commit"
+      build_date="${src_config_path}/x.Date"
+      go_linker_flags="-s \
+                       -w \
+                       -X ${build_ver}=$(git -C "${CRAFT_PART_SRC}" describe --tags) \
+                       -X ${build_hash}=$(git -C "${CRAFT_PART_SRC}" rev-parse HEAD) \
+                       -X ${build_date}=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+
+      go mod download
+      go build -ldflags="${go_linker_flags}" -o ${CRAFT_PART_INSTALL}/bin/oathkeeper
     source: https://github.com/ory/oathkeeper
     source-type: git
     source-tag: v0.40.3
