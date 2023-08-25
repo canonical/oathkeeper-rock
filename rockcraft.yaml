@@ -17,6 +17,11 @@ services:
     startup: enabled
 
 parts:
+  certificates:
+    plugin: nil
+    stage-packages:
+      - ca-certificates
+
   oathkeeper:
     plugin: go
     build-snaps:
