@@ -13,5 +13,6 @@
   ],
   "automergeType": "pr",
   "rebaseWhen": "behind-base-branch",
-  "automerge": true
+  "automerge": true,
+  "additionalBranchPrefix": "auto-"
 }
