@@ -1,6 +1,6 @@
 name: oathkeeper
 base: bare
-build-base: ubuntu:22.04
+build-base: ubuntu@22.04
 version: "0.40.6"
 summary: Ory Oathkeeper
 description: |
