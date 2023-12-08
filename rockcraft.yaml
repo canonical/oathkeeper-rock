@@ -19,9 +19,33 @@ services:
 parts:
   certificates:
     plugin: nil
-    stage-packages:
+    build-packages:
       - ca-certificates
-
+    override-build: |
+      mkdir -p $CRAFT_PART_INSTALL/etc/ssl/certs
+      mkdir -p $CRAFT_PART_INSTALL/usr/share/ca-certificates/mozilla/
+      mkdir -p $CRAFT_PART_INSTALL/usr/sbin
+      mkdir -p $CRAFT_PART_INSTALL/tmp
+      touch $CRAFT_PART_INSTALL/etc/ssl/certs/ca-certificates.crt
+      touch $CRAFT_PART_INSTALL/etc/ca-certificates.conf
+      for cert in /usr/share/ca-certificates/mozilla/* ; do
+        echo "mozilla/$(basename $cert)" >> $CRAFT_PART_INSTALL/etc/ca-certificates.conf
+        cat "$cert" >> $CRAFT_PART_INSTALL/etc/ssl/certs/ca-certificates.crt
+      done
+      cp /usr/share/ca-certificates/mozilla/* $CRAFT_PART_INSTALL/usr/share/ca-certificates/mozilla
+      cp /usr/sbin/update-ca-certificates $CRAFT_PART_INSTALL/usr/sbin/update-ca-certificates
+      chmod 777 $CRAFT_PART_INSTALL/tmp
+      chmod -R 777 $CRAFT_PART_INSTALL/etc/ssl/certs
+    prime:
+      - usr/sbin/update-ca-certificates
+  sed:
+    plugin: nil
+    stage-packages:
+      - sed
+  find:
+    plugin: nil
+    stage-packages:
+      - findutils
   oathkeeper:
     plugin: go
     build-snaps:
