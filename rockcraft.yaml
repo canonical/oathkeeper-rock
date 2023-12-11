@@ -1,6 +1,6 @@
 name: oathkeeper
 base: bare
-build-base: ubuntu:22.04
+build-base: ubuntu@22.04
 version: "0.40.6"
 summary: Ory Oathkeeper
 description: |
@@ -17,11 +17,31 @@ services:
     startup: enabled
 
 parts:
-  certificates:
+  certificates-bins:
     plugin: nil
     stage-packages:
+      - coreutils_bins
+      - openssl_bins
+      - base-files_tmp
+  certificates:
+    plugin: nil
+    build-packages:
       - ca-certificates
-
+    override-build: |
+      mkdir -p $CRAFT_PART_INSTALL/etc/ssl/certs
+      mkdir -p $CRAFT_PART_INSTALL/usr/share/ca-certificates/mozilla/
+      mkdir -p $CRAFT_PART_INSTALL/usr/sbin
+      touch $CRAFT_PART_INSTALL/etc/ca-certificates.conf
+      for cert in /usr/share/ca-certificates/mozilla/* ; do
+        echo "mozilla/$(basename $cert)" >> $CRAFT_PART_INSTALL/etc/ca-certificates.conf
+      done
+      cp /usr/share/ca-certificates/mozilla/* $CRAFT_PART_INSTALL/usr/share/ca-certificates/mozilla
+      cp /usr/sbin/update-ca-certificates $CRAFT_PART_INSTALL/usr/sbin/update-ca-certificates
+      chmod -R 777 $CRAFT_PART_INSTALL/etc/ssl/certs
+    stage-packages:
+      - dash
+      - sed
+      - findutils
   oathkeeper:
     plugin: go
     build-snaps:
