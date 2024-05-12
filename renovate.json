@@ -9,10 +9,27 @@
     ":rebaseStalePrs",
     ":semanticCommits",
     ":semanticCommitScope(deps)",
-    "helpers:pinGitHubActionDigests"
+    "helpers:pinGitHubActionDigests",
+    ":enablePreCommit"
   ],
   "automergeType": "pr",
   "rebaseWhen": "behind-base-branch",
-  "automerge": true,
-  "additionalBranchPrefix": "auto-"
+  "packageRules": [
+    {
+      "groupName": "github actions",
+      "matchManagers": ["github-actions"],
+      "matchUpdateTypes": ["major", "minor", "patch", "pin", "digest"],
+      "automerge": true,
+      "schedule": ["at any time"],
+      "additionalBranchPrefix": "auto-"
+    },
+    {
+      "groupName": "pre-commit hooks",
+      "matchManagers": ["pre-commit"],
+      "matchUpdateTypes": ["major", "minor", "patch", "pin", "digest"],
+      "automerge": true,
+      "schedule": ["at any time"],
+      "additionalBranchPrefix": "auto-"
+    }
+  ]
 }
