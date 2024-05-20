@@ -3,7 +3,7 @@
 ![Latest Version](https://img.shields.io/badge/dynamic/yaml?url=https%3A%2F%2Fraw.githubusercontent.com%2Fcanonical%2Foathkeeper-rock%2Fmain%2Frockcraft.yaml&query=%24.version&label=Release&color=red)
 [![License](https://img.shields.io/github/license/canonical/oathkeeper-rock?label=License)](https://github.com/canonical/oathkeeper-rock/blob/main/LICENSE)
 
-[![CI](https://github.com/canonical/oathkeeper-rock/actions/workflows/ci.yaml/badge.svg)](https://github.com/canonical/oathkeeper-rock/actions/workflows/ci.yaml)
+[![Release](https://github.com/canonical/oathkeeper-rock/actions/workflows/ci.yaml/badge.svg)](https://github.com/canonical/oathkeeper-rock/actions/workflows/ci.yaml)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
 [![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196.svg)](https://conventionalcommits.org)
 

@@ -6,11 +6,18 @@ name: CI
 # * scan the image and upload the artifacts to the repository
 
 on:
-  pull_request:
   push:
+    branches:
+     - "main"
+     - "release-**"
+    tags:
+     - "v**"
     paths:
       - "rockcraft.yaml"
       - ".github/workflows/**.yaml"
+  pull_request:
+    branches:
+     - "*"
   workflow_dispatch:
 
 jobs:
@@ -18,11 +25,11 @@ jobs:
     uses: ./.github/workflows/build.yaml
 
   publish:
-    if: github.ref == 'refs/heads/main'
+    if: ${{ (github.ref == 'refs/heads/main') || (github.ref_type == 'tag') }}
     needs: build
     uses: ./.github/workflows/publish.yaml
 
   scan:
-    if: github.ref == 'refs/heads/main'
+    if: ${{ (github.ref == 'refs/heads/main') || (github.ref_type == 'tag') }}
     needs: publish
     uses: ./.github/workflows/scan.yaml
