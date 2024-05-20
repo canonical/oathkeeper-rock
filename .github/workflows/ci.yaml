@@ -1,4 +1,4 @@
-name: Push (main)
+name: CI
 
 # When pushing to the "main" branch, we:
 # * build the rock image
@@ -6,9 +6,8 @@ name: Push (main)
 # * scan the image and upload the artifacts to the repository
 
 on:
+  pull_request:
   push:
-    branches:
-      - main
     paths:
       - "rockcraft.yaml"
       - ".github/workflows/**.yaml"
@@ -19,9 +18,11 @@ jobs:
     uses: ./.github/workflows/build.yaml
 
   publish:
+    if: github.ref == 'refs/heads/main'
     needs: build
     uses: ./.github/workflows/publish.yaml
 
   scan:
+    if: github.ref == 'refs/heads/main'
     needs: publish
     uses: ./.github/workflows/scan.yaml
