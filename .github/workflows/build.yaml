@@ -25,12 +25,12 @@ jobs:
         run: syft ${{ steps.rockcraft.outputs.rock }} -o spdx-json=${{ steps.name.outputs.name }}.sbom.json
 
       - name: Upload SBOM
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@89ef406dd8d7e03cfd12d9e0a4a378f454709029 # v4
         with:
           name: ${{ steps.name.outputs.name }}-sbom
           path: "${{ steps.name.outputs.name }}.sbom.json"
 
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@89ef406dd8d7e03cfd12d9e0a4a378f454709029 # v4
         with:
           name: rock
           path: ${{ steps.rockcraft.outputs.rock }}
