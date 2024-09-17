@@ -20,7 +20,7 @@ jobs:
 
       - name: Install skopeo
         run: |
-          sudo snap install --devmode --channel edge skopeo
+          sudo snap install --classic --channel latest/edge rockcraft
 
       - name: Install yq
         run: |
@@ -35,7 +35,7 @@ jobs:
           image_name="$(yq '.name' rockcraft.yaml)"
           version="$(yq '.version' rockcraft.yaml)"
           rock_file=$(ls *.rock | tail -n 1)
-          sudo skopeo \
+          sudo rockcraft.skopeo \
             --insecure-policy \
             copy \
             oci-archive:"${rock_file}" \
