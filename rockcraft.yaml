@@ -1,6 +1,6 @@
 name: oathkeeper
 base: bare
-build-base: ubuntu:22.04
+build-base: ubuntu@22.04
 version: "0.40.6"
 summary: Ory Oathkeeper
 description: |
@@ -25,9 +25,9 @@ parts:
   oathkeeper:
     plugin: go
     build-snaps:
-      - go/1.20/stable
+      - go/1.21/stable
     build-environment:
-      - CGO_ENABLED: 0
+      - CGO_ENABLED: "0"
     override-build: |
       src_config_path="github.com/ory/oathkeeper"
       build_ver="${src_config_path}/x.Version"
