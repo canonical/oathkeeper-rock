@@ -15,6 +15,11 @@ upstream Ory Oathkeeper. The Oathkeeper rock is used by
 the [oathkeeper-operator](https://github.com/canonical/oathkeeper-operator)
 charm.
 
+## Security
+
+Please see [SECURITY.md](https://github.com/canonical/oathkeeper-rock/blob/main/SECURITY.md)
+for guidelines on reporting security issues.
+
 ## Contributing
 
 Please refer to the [CONTRIBUTING](CONTRIBUTING.md) for developer guidance.
