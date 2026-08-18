@@ -17,7 +17,7 @@ jobs:
           echo "image_name=$(yq '.name' rockcraft.yaml)" >> "$GITHUB_OUTPUT"
           echo "version=$(yq '.version' rockcraft.yaml)" >> "$GITHUB_OUTPUT"
       - name: Scan image with Trivy
-        uses: aquasecurity/trivy-action@master
+        uses: aquasecurity/trivy-action@d2a0b60797ff03db6132bd4e2b293f9b37081297 # master
         with:
           image-ref: "ghcr.io/canonical/${{ steps.image_info.outputs.image_name }}:${{ steps.image_info.outputs.version }}"
           format: 'sarif'
