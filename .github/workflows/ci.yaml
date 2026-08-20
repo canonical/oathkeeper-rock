@@ -1,17 +1,9 @@
 name: CI
 
-# When pushing to the "main" branch, we:
-# * build the rock image
-# * publish the image
-# * scan the image and upload the artifacts to the repository
-
 on:
   push:
     branches:
      - "main"
-     - "release-**"
-    tags:
-     - "v**"
     paths:
       - "rockcraft.yaml"
       - ".github/workflows/**.yaml"
@@ -21,15 +13,58 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-    uses: ./.github/workflows/build.yaml
+  get-architectures:
+    runs-on: ubuntu-latest
+    outputs:
+      architectures: ${{ steps.parse.outputs.architectures }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
-  publish:
-    if: ${{ (github.ref == 'refs/heads/main') || (github.ref_type == 'tag') }}
+      - name: Parse platforms from rockcraft.yaml
+        id: parse
+        run: |
+          archs=$(yq -o=json -I=0 '.platforms | keys' rockcraft.yaml)
+          echo "Found architectures: $archs"
+          echo "architectures=$archs" >> "$GITHUB_OUTPUT"
+
+  build:
+    needs: get-architectures
+    strategy:
+      matrix:
+        architecture: ${{ fromJson(needs.get-architectures.outputs.architectures) }}
+    uses: canonical/identity-team/.github/workflows/_rock-build.yaml@1bf335af1d939c8543e53d376dd49d79126c2cd3 # v1.15.0
+    with:
+      structure-tests-enabled: false
+      architecture: ${{ matrix.architecture }}
+
+  gh-publish:
+    if: ${{ github.ref == 'refs/heads/main' }}
     needs: build
-    uses: ./.github/workflows/publish.yaml
+    permissions:
+      packages: write
+      contents: read
+    uses: canonical/identity-team/.github/workflows/_rock-gh-publish-third-party.yaml@1bf335af1d939c8543e53d376dd49d79126c2cd3 # v1.15.0
+
+  oci-publish:
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs: build
+    uses: canonical/identity-team/.github/workflows/_rock-oci-publish.yaml@1bf335af1d939c8543e53d376dd49d79126c2cd3 # v1.15.0
+    with:
+      edge-release: false
+      eol-stable-release: "3 month"
+      ubuntu-base-version: "26.04"
+    secrets:
+      PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
 
   scan:
-    if: ${{ (github.ref == 'refs/heads/main') || (github.ref_type == 'tag') }}
-    needs: publish
-    uses: ./.github/workflows/scan.yaml
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs: gh-publish
+    permissions:
+      security-events: write
+      actions: read
+      contents: read
+      packages: read
+    uses: canonical/identity-team/.github/workflows/_rock-scan.yaml@1bf335af1d939c8543e53d376dd49d79126c2cd3 # v1.15.0
+    with:
+      image: ${{ needs.gh-publish.outputs.image }}
