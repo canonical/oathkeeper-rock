@@ -9,6 +9,7 @@ license: Apache-2.0
 run-user: _daemon_
 platforms:
   amd64:
+  arm64:
 
 services:
   oathkeeper:
@@ -17,17 +18,15 @@ services:
     startup: enabled
 
 parts:
-  certificates:
-    plugin: nil
-    stage-packages:
-      - ca-certificates
-
   oathkeeper:
     plugin: go
     build-snaps:
       - go/1.26/stable
     build-environment:
       - CGO_ENABLED: "0"
+    stage-packages:
+      - ca-certificates_data
+      - base-files_chisel
     override-build: |
       src_config_path="github.com/ory/oathkeeper"
       build_ver="${src_config_path}/x.Version"
@@ -57,9 +56,16 @@ parts:
       go mod edit -replace google.golang.org/grpc=google.golang.org/grpc@v1.58.3
       go mod edit -replace google.golang.org/protobuf=google.golang.org/protobuf@v1.33.0
 
-      go mod download
       go mod tidy
-      go build -ldflags="${go_linker_flags}" -o ${CRAFT_PART_INSTALL}/bin/oathkeeper
+      go mod download
+      GOARCH="${CRAFT_ARCH_BUILD_FOR}" go build -ldflags="${go_linker_flags}" -o "${CRAFT_PART_INSTALL}"/bin/oathkeeper
     source: https://github.com/ory/oathkeeper
     source-tag: v0.40.6
     source-type: git
+
+  deb-security-manifest:
+    plugin: make
+    source: https://github.com/canonical/rocks-security-manifest
+    source-type: git
+    source-branch: main
+    override-prime: gen_manifest
