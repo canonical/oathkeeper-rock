@@ -28,6 +28,9 @@ parts:
       - ca-certificates_data
       - base-files_chisel
     override-build: |
+      export PATH=/snap/bin:$PATH
+      echo "Go version used: $(go version)"
+
       src_config_path="github.com/ory/oathkeeper"
       build_ver="${src_config_path}/x.Version"
       build_hash="${src_config_path}/x.Commit"
@@ -38,6 +41,7 @@ parts:
                        -X ${build_hash}=$(git -C "${CRAFT_PART_SRC}" rev-parse HEAD) \
                        -X ${build_date}=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
+      go mod edit -go=1.26
       go mod edit -replace github.com/docker/docker=github.com/docker/docker@v24.0.9+incompatible
       go mod edit -replace github.com/golang-jwt/jwt/v4=github.com/golang-jwt/jwt/v4@v4.5.2
       go mod edit -replace github.com/golang/glog=github.com/golang/glog@v1.2.4
