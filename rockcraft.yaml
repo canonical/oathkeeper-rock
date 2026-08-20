@@ -1,6 +1,6 @@
 name: oathkeeper
 base: bare
-build-base: ubuntu@22.04
+build-base: ubuntu@26.04
 version: "0.40.6"
 summary: Ory Oathkeeper
 description: |
@@ -25,7 +25,7 @@ parts:
   oathkeeper:
     plugin: go
     build-snaps:
-      - go/1.21/stable
+      - go/1.26/stable
     build-environment:
       - CGO_ENABLED: "0"
     override-build: |
@@ -39,8 +39,27 @@ parts:
                        -X ${build_hash}=$(git -C "${CRAFT_PART_SRC}" rev-parse HEAD) \
                        -X ${build_date}=$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 
+      go mod edit -replace github.com/docker/docker=github.com/docker/docker@v24.0.9+incompatible
+      go mod edit -replace github.com/golang-jwt/jwt/v4=github.com/golang-jwt/jwt/v4@v4.5.2
+      go mod edit -replace github.com/golang/glog=github.com/golang/glog@v1.2.4
+      go mod edit -replace github.com/hashicorp/go-retryablehttp=github.com/hashicorp/go-retryablehttp@v0.7.7
+      go mod edit -replace github.com/jackc/pgproto3/v2=github.com/jackc/pgproto3/v2@v2.3.3
+      go mod edit -replace github.com/jackc/pgx/v4=github.com/jackc/pgx/v4@v4.18.3
+      go mod edit -replace github.com/nyaruka/phonenumbers=github.com/nyaruka/phonenumbers@v1.4.0
+      go mod edit -replace github.com/sirupsen/logrus=github.com/sirupsen/logrus@v1.9.3
+      go mod edit -replace go.mongodb.org/mongo-driver=go.mongodb.org/mongo-driver@v1.17.7
+      go mod edit -replace golang.org/x/crypto=golang.org/x/crypto@v0.52.0
+      go mod edit -replace golang.org/x/mod=golang.org/x/mod@v0.40.0
+      go mod edit -replace golang.org/x/net=golang.org/x/net@v0.56.0
+      go mod edit -replace golang.org/x/oauth2=golang.org/x/oauth2@v0.28.0
+      go mod edit -replace golang.org/x/sys=golang.org/x/sys@v0.44.0
+      go mod edit -replace golang.org/x/text=golang.org/x/text@v0.39.0
+      go mod edit -replace google.golang.org/grpc=google.golang.org/grpc@v1.58.3
+      go mod edit -replace google.golang.org/protobuf=google.golang.org/protobuf@v1.33.0
+
       go mod download
+      go mod tidy
       go build -ldflags="${go_linker_flags}" -o ${CRAFT_PART_INSTALL}/bin/oathkeeper
     source: https://github.com/ory/oathkeeper
-    source-type: git
     source-tag: v0.40.6
+    source-type: git
