@@ -1,0 +1,31 @@
+name: Upstream upgrade
+run-name: Upstream upgrade analysis for PR ${{ github.event.pull_request.number }}
+
+# When a pull request changes the upstream version in rockcraft.yaml (Renovate
+# opens these), comment with what changed in upstream's build, automatically
+# remove satisfied CVE dependency overrides, and assess how risky the upgrade
+# is. The same tooling writes the charm upgrade issues, which are opened by
+# hand, see upstream-charm-issues.yaml.
+
+on:
+  pull_request:
+    paths:
+      - "rockcraft.yaml"
+      - ".github/upstream-upgrade.yaml"
+      - ".github/workflows/upstream-upgrade.yaml"
+
+concurrency:
+  group: upstream-upgrade-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  analyse:
+    uses: canonical/identity-team/.github/workflows/_rock-upstream-upgrade.yaml@main
+    secrets:
+      PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      OPENROUTER_CI_KEY: ${{ secrets.OPENROUTER_CI_KEY }}
