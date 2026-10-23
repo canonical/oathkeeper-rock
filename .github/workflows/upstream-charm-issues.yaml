@@ -34,7 +34,7 @@ permissions:
 
 jobs:
   open-issues:
-    uses: canonical/identity-team/.github/workflows/_rock-upstream-charm-issues.yaml@main
+    uses: canonical/identity-team/.github/workflows/_rock-upstream-charm-issues.yaml@bacce5fe2bd598f8daa69c64438fb872334e2d0a # v1.18.0
     with:
       target-branch: ${{ inputs.target-branch || 'main' }}
       to-version: ${{ inputs.to-version }}
