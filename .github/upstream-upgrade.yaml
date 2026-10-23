@@ -1,0 +1,18 @@
+# Configuration for canonical/identity-team upstream-upgrade workflows.
+# Upstream repository, tag prefix, and rock image are auto-detected from rockcraft.yaml.
+
+trusted_link_hosts:
+  - www.ory.sh
+
+charms:
+  - key: oathkeeper
+    repo: canonical/oathkeeper-operator
+    description: >-
+      Deploys Ory Oathkeeper identity and access proxy and configures
+      access rules and authenticators.
+    files:
+      - charmcraft.yaml
+      - src/charm.py
+      - src/config_map.py
+      - src/constants.py
+      - src/oathkeeper_cli.py

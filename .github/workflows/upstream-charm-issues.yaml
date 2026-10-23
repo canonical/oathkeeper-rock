@@ -1,0 +1,46 @@
+name: Upstream charm upgrade issues
+run-name: Charm upgrade issues for branch ${{ inputs.target-branch || 'main' }}
+
+# Open an issue on each charm that describes an upgrade to a newer rock and what
+# has to be validated. Run it by hand when the charms are ready to move: the rock
+# follows upstream on its own schedule, so nothing is filed when it publishes.
+
+on:
+  workflow_dispatch:
+    inputs:
+      target-branch:
+        description: "Target branch in the charm repositories"
+        type: string
+        required: false
+        default: "main"
+      to-version:
+        description: "Upstream version to move to (default: the one in rockcraft.yaml)"
+        type: string
+        required: false
+        default: ""
+      image:
+        description: "Published image (default: the rock's image for that version)"
+        type: string
+        required: false
+        default: ""
+      dry-run:
+        description: "Generate the issues without opening them"
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  open-issues:
+    uses: canonical/identity-team/.github/workflows/_rock-upstream-charm-issues.yaml@bacce5fe2bd598f8daa69c64438fb872334e2d0a # v1.18.0
+    with:
+      target-branch: ${{ inputs.target-branch || 'main' }}
+      to-version: ${{ inputs.to-version }}
+      image: ${{ inputs.image }}
+      dry-run: ${{ inputs.dry-run }}
+    secrets:
+      PAT_TOKEN: ${{ secrets.PAT_TOKEN }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      OPENROUTER_CI_KEY: ${{ secrets.OPENROUTER_CI_KEY }}
